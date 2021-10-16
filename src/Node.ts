@@ -18,6 +18,9 @@ export class NodeElement {
     private _isWallNode: boolean = false;
     private _element: HTMLDivElement;
     private _position: { row: number; column: number };
+    private _distance: number = Infinity;
+    private _isVisited: boolean = false;
+    private _previousNode: NodeElement | null = null;
 
     constructor({
         position,
@@ -55,6 +58,38 @@ export class NodeElement {
 
     public get position() {
         return this._position;
+    }
+
+    public setPreviousNode = (node: NodeElement) => {
+        this._previousNode = node;
+    }
+
+    public get previousNode() {
+        return this._previousNode;
+    }
+
+    public setDistance = (distance: number) => {
+        this._distance = distance;
+    }
+
+    public get isVisited() {
+        return this._isVisited;
+    }
+
+    public setVisited = (value: boolean) => {
+        this._isVisited = value;
+    }
+
+    public setVisitedClass = () => {
+        this._element.classList.add('visited');
+    }
+
+    public setShortClass = () => {
+        this._element.classList.add('short');
+    }
+
+    public get distance() {
+        return this._distance;
     }
 
     public setWallNode = () => {

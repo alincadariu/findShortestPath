@@ -17,7 +17,7 @@ body {
 .node {
     height: 20px;
     width: 20px;
-    box-shadow: 2px red;
+    box-shadow: 2px orangered;
     background-color: #fb3;
     border-radius: 10px 10px 10px 3px;
 }
@@ -32,4 +32,31 @@ body {
 
 .node.wallNode {
     background-color: white;
+}
+
+.node.visited {
+    background-color: black;
+}
+
+.node.short {
+    background-color: orangered;
+}
+
+.button {
+    width: fit-content;
+    height: 50px;
+    background-color: orangered;
+    border-radius: 30px;
+    border: 0px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 70%);
+    cursor: pointer;
+}
+
+.buttonText {
+    padding: 0px 10px;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 1px;
 }

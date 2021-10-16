@@ -1,5 +1,5 @@
-import { fromEvent, map, mergeMap, Observable, Observer, of, takeUntil } from "rxjs";
 import { NodeElement } from "./Node";
+import { dijkstra, getNodesInShortestPathOrder } from "./dijkstra";
 
 type GridProps = {
     startNode: number[];
@@ -46,8 +46,55 @@ export class Grid {
                         onMouseLeave: this._onMouseLeave,
                     });
                 }));
-
+        const button = document.createElement('button');
+        const buttonText = document.createElement('p');
+        button.classList.add('button');
+        buttonText.classList.add('buttonText');
+        buttonText.textContent = 'Find shortest path';
+        button.appendChild(buttonText);
+        parent.appendChild(button);
+        button.addEventListener('click', this._animate);
         parent.appendChild(this._gridElement);
+    }
+
+    private _animate = () => {
+        const startNode = this._getStartNode();
+        const destinationNode = this._getDestinationNode();
+        const visitedNodesInOrder = dijkstra(this._nodes, startNode, destinationNode) as NodeElement[];
+        const nodesInShortestPathOrder = getNodesInShortestPathOrder(destinationNode);
+        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+            if (i === visitedNodesInOrder.length) {
+                setTimeout(() => {
+                    this._animateShortestPath(nodesInShortestPathOrder);
+                }, 10 * i);
+                return;
+            }
+
+            setTimeout(() => {
+                const node = visitedNodesInOrder[i];
+                if (i === 0) {
+                    return;
+                }
+                node.setVisitedClass();
+            }, 10 * i);
+        }
+    }
+
+    private _animateShortestPath(nodesInShortestPathOrder: NodeElement[]) {
+        for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+            setTimeout(() => {
+                const node = nodesInShortestPathOrder[i];
+                node.setShortClass();
+            }, 20 * i);
+        }
+    }
+
+    private _getStartNode = () => {
+        return this._nodes.flatMap(row => row).filter(({ isStartNode }) => isStartNode)[0];
+    }
+
+    private _getDestinationNode = () => {
+        return this._nodes.flatMap(row => row).filter(({ isDestinationNode }) => isDestinationNode)[0];
     }
 
     private _onMouseDown = (node: NodeElement) => {
