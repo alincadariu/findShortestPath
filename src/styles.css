@@ -1,3 +1,15 @@
+@keyframes visiting {
+    10% { background-color: green; }
+    30% { background-color: yellowgreen; }
+    60%, 100% { background-color: black; }
+  }
+
+@keyframes short {
+    10% { background-color: lightsalmon; }
+    30% { background-color: lightcoral; }
+    60%, 100% { background-color: orangered; }
+}
+
 body {
     margin: 0;
 }
@@ -34,12 +46,15 @@ body {
     background-color: white;
 }
 
-.node.visited {
-    background-color: black;
+.node.visiting {
+    animation: visiting 2s ease-in;
+    animation-fill-mode: forwards;
 }
 
-.node.short {
-    background-color: orangered;
+.node.visiting.short {
+    animation: short 2s ease-in;
+    animation-fill-mode: forwards;
+    background-color: black;
 }
 
 .button {

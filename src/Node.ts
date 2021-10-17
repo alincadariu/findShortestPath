@@ -84,6 +84,10 @@ export class NodeElement {
         this._element.classList.add('visited');
     }
 
+    public setVisitingClass = () => {
+        this._element.classList.add('visiting');
+    }
+
     public setShortClass = () => {
         this._element.classList.add('short');
     }

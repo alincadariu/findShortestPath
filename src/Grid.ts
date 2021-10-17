@@ -72,10 +72,10 @@ export class Grid {
 
             setTimeout(() => {
                 const node = visitedNodesInOrder[i];
-                if (i === 0) {
+                if (i === 0 || i === visitedNodesInOrder.length - 1) {
                     return;
                 }
-                node.setVisitedClass();
+                node.setVisitingClass();
             }, 10 * i);
         }
     }
@@ -84,8 +84,11 @@ export class Grid {
         for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
             setTimeout(() => {
                 const node = nodesInShortestPathOrder[i];
+                if (i === 0 || i === nodesInShortestPathOrder.length - 1) {
+                    return;
+                }
                 node.setShortClass();
-            }, 20 * i);
+            }, 100 * i);
         }
     }
 
