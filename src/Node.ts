@@ -6,13 +6,13 @@ type NodeProps = {
         column: number;
     }
     grid: HTMLDivElement;
-    onMouseDown: (e: NodeElement) => void;
-    onMouseEnter: (e: NodeElement) => void;
-    onMouseUp: (e: NodeElement) => void;
-    onMouseLeave: (e: NodeElement) => void;
+    onMouseDown: (e: Node) => void;
+    onMouseEnter: (e: Node) => void;
+    onMouseUp: () => void;
+    onMouseLeave: (e: Node) => void;
 }
 
-export class NodeElement {
+export class Node {
     private _isDestinationNode: boolean = false;
     private _isStartNode: boolean = false;
     private _isWallNode: boolean = false;
@@ -20,7 +20,7 @@ export class NodeElement {
     private _position: { row: number; column: number };
     private _distance: number = Infinity;
     private _isVisited: boolean = false;
-    private _previousNode: NodeElement | null = null;
+    private _previousNode: Node | null = null;
 
     constructor({
         position,
@@ -50,7 +50,7 @@ export class NodeElement {
 
         this._element.addEventListener('mousedown', () => onMouseDown(this));
         this._element.addEventListener('mouseenter', () => onMouseEnter(this));
-        this._element.addEventListener('mouseup', () => onMouseUp(this));
+        this._element.addEventListener('mouseup', () => onMouseUp());
         this._element.addEventListener('mouseleave', () => onMouseLeave(this));
 
         grid.appendChild(this._element);
@@ -60,7 +60,7 @@ export class NodeElement {
         return this._position;
     }
 
-    public setPreviousNode = (node: NodeElement) => {
+    public setPreviousNode = (node: Node) => {
         this._previousNode = node;
     }
 
@@ -80,15 +80,11 @@ export class NodeElement {
         this._isVisited = value;
     }
 
-    public setVisitedClass = () => {
-        this._element.classList.add('visited');
-    }
-
-    public setVisitingClass = () => {
+    public animateVisiting = () => {
         this._element.classList.add('visiting');
     }
 
-    public setShortClass = () => {
+    public animateShortest = () => {
         this._element.classList.add('short');
     }
 

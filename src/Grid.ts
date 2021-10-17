@@ -1,4 +1,4 @@
-import { NodeElement } from "./Node";
+import { Node } from "./Node";
 import {
     dijkstra,
     getShortestPath
@@ -13,7 +13,7 @@ type GridProps = {
 }
 
 export class Grid {
-    private _nodes: NodeElement[][];
+    private _nodes: Node[][];
     private _gridElement: HTMLDivElement;
     private _isDragging: boolean = false;
     private _isDraggingSpecialNode: boolean = false;
@@ -35,7 +35,7 @@ export class Grid {
                     const isStartNode = rowIndex === startNode[0] && columnIndex === startNode[1];
                     const isDestinationNode = rowIndex === destinationNode[0] && columnIndex === destinationNode[1];
 
-                    return new NodeElement({
+                    return new Node({
                         position: {
                             row: rowIndex,
                             column: columnIndex
@@ -58,7 +58,7 @@ export class Grid {
     private _animate = () => {
         const startNode = this._getStartNode();
         const destinationNode = this._getDestinationNode();
-        const visitedNodesInOrder = dijkstra(this._nodes, startNode, destinationNode) as NodeElement[];
+        const visitedNodesInOrder = dijkstra(this._nodes, startNode, destinationNode) as Node[];
         const shortestPath = getShortestPath(destinationNode);
         visitedNodesInOrder.forEach((node, idx) => {
             if (idx === visitedNodesInOrder.length - 1) {
@@ -72,18 +72,18 @@ export class Grid {
                 if (idx === 0) {
                     return;
                 }
-                node.setVisitingClass();
+                node.animateVisiting();
             }, 10 * idx);
         });
     }
 
-    private _animateShortestPath(path: NodeElement[]) {
+    private _animateShortestPath(path: Node[]) {
         path.forEach((node, idx) => {
             setTimeout(() => {
                 if (idx === 0) {
                     return;
                 }
-                node.setShortClass();
+                node.animateShortest();
             }, 50 * idx);
         });
     }
@@ -96,7 +96,7 @@ export class Grid {
         return this._nodes.flatMap(row => row.filter(({ isDestinationNode }) => isDestinationNode))[0];
     }
 
-    private _onMouseDown = (node: NodeElement) => {
+    private _onMouseDown = (node: Node) => {
         this._isDraggingSpecialNode = node.isSpecialNode;
         if (this._isDraggingSpecialNode) {
             this._typeSpecialNode = node.isStartNode
@@ -106,7 +106,7 @@ export class Grid {
         this._isDragging = true;
     }
 
-    private _onMouseEnter = (node: NodeElement) => {
+    private _onMouseEnter = (node: Node) => {
         if (!this._isDragging) {
             return;
         }
@@ -116,24 +116,24 @@ export class Grid {
             : node.setWallNode();
     }
 
-    private _onMouseLeave = (node: NodeElement) => {
+    private _onMouseLeave = (node: Node) => {
         if (!(this._isDragging && this._isDraggingSpecialNode)) {
             return;
         }
         this._removeSpecialNode(node);
     }
 
-    private _onMouseUp = (node: NodeElement) => {
+    private _onMouseUp = () => {
         this._isDragging = false;
     }
 
-    private _setSpecialNode = (node: NodeElement) => {
+    private _setSpecialNode = (node: Node) => {
         this._typeSpecialNode === 'start'
             ? node.setStartNode()
             : node.setDestinationNode();
     }
 
-    private _removeSpecialNode = (node: NodeElement) => {
+    private _removeSpecialNode = (node: Node) => {
         this._typeSpecialNode === 'start'
             ? node.removeStartNode()
             : node.removeDestinationNode();

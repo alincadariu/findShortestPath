@@ -2,15 +2,15 @@
 // in which they were visited. Also makes nodes point back to their
 // previous node, effectively allowing us to compute the shortest path
 // by backtracking from the finish node.
-import { NodeElement } from "./Node";
+import { Node } from "./Node";
 
-export const dijkstra = (grid: NodeElement[][], startNode: NodeElement, destinationNode: NodeElement) => {
-    const visitedNodesInOrder: NodeElement[] = [];
+export const dijkstra = (grid: Node[][], startNode: Node, destinationNode: Node) => {
+    const visitedNodesInOrder: Node[] = [];
     startNode.setDistance(0);
     const unvisitedNodes = grid.flatMap(node => node);
     while (!!unvisitedNodes.length) {
         sortNodesByDistance(unvisitedNodes);
-        const closestNode = unvisitedNodes.shift() as NodeElement;
+        const closestNode = unvisitedNodes.shift() as Node;
         // If we encounter a wall, we skip it.
         if (closestNode.isWallNode) continue;
         // If the closest node is at a distance of infinity,
@@ -23,11 +23,11 @@ export const dijkstra = (grid: NodeElement[][], startNode: NodeElement, destinat
     }
 }
 
-const sortNodesByDistance = (unvisitedNodes: NodeElement[]) => {
+const sortNodesByDistance = (unvisitedNodes: Node[]) => {
     unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
 }
 
-const updateUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
+const updateUnvisitedNeighbors = (node: Node, grid: Node[][]) => {
     const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
     unvisitedNeighbors.forEach((neighbor) => {
         neighbor.setDistance(node.distance + 1);
@@ -35,8 +35,8 @@ const updateUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
     });
 }
 
-const getUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
-    const neighbors: NodeElement[] = [];
+const getUnvisitedNeighbors = (node: Node, grid: Node[][]) => {
+    const neighbors: Node[] = [];
     const { column, row } = node.position;
     if (row > 0) neighbors.push(grid[row - 1][column]);
     if (row < grid.length - 1) neighbors.push(grid[row + 1][column]);
@@ -47,9 +47,9 @@ const getUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
 
 // Backtracks from the finishNode to find the shortest path.
 // Only works when called *after* the dijkstra method above.
-export const getShortestPath = (destinationNode: NodeElement) => {
-    const path: NodeElement[] = [];
-    let currentNode: NodeElement | null = destinationNode;
+export const getShortestPath = (destinationNode: Node) => {
+    const path: Node[] = [];
+    let currentNode: Node | null = destinationNode;
     while (currentNode !== null) {
         path.unshift(currentNode);
         currentNode = currentNode.previousNode;
