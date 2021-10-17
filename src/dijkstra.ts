@@ -11,14 +11,14 @@ export const dijkstra = (grid: Node[][], startNode: Node, destinationNode: Node)
     while (!!unvisitedNodes.length) {
         sortNodesByDistance(unvisitedNodes);
         const closestNode = unvisitedNodes.shift() as Node;
-        // If we encounter a wall, we skip it.
+
         if (closestNode.isWallNode) continue;
-        // If the closest node is at a distance of infinity,
-        // we must be trapped and should therefore stop.
-        if (closestNode.distance === Infinity) return visitedNodesInOrder;
+
         closestNode.setVisited(true);
         visitedNodesInOrder.push(closestNode);
+
         if (closestNode === destinationNode) return visitedNodesInOrder;
+
         updateUnvisitedNeighbors(closestNode, grid);
     }
 }
