@@ -1,5 +1,8 @@
 import { NodeElement } from "./Node";
-import { dijkstra, getNodesInShortestPathOrder } from "./dijkstra";
+import {
+    dijkstra,
+    getShortestPath
+} from "./dijkstra";
 
 type GridProps = {
     startNode: number[];
@@ -46,6 +49,7 @@ export class Grid {
                         onMouseLeave: this._onMouseLeave,
                     });
                 }));
+
         const button = document.createElement('button');
         const buttonText = document.createElement('p');
         button.classList.add('button');
@@ -61,43 +65,41 @@ export class Grid {
         const startNode = this._getStartNode();
         const destinationNode = this._getDestinationNode();
         const visitedNodesInOrder = dijkstra(this._nodes, startNode, destinationNode) as NodeElement[];
-        const nodesInShortestPathOrder = getNodesInShortestPathOrder(destinationNode);
-        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-            if (i === visitedNodesInOrder.length) {
+        const shortestPath = getShortestPath(destinationNode);
+        visitedNodesInOrder.forEach((node, idx) => {
+            if (idx === visitedNodesInOrder.length - 1) {
                 setTimeout(() => {
-                    this._animateShortestPath(nodesInShortestPathOrder);
-                }, 10 * i);
+                    this._animateShortestPath(shortestPath);
+                }, 10 * idx);
                 return;
             }
 
             setTimeout(() => {
-                const node = visitedNodesInOrder[i];
-                if (i === 0 || i === visitedNodesInOrder.length - 1) {
+                if (idx === 0) {
                     return;
                 }
                 node.setVisitingClass();
-            }, 10 * i);
-        }
+            }, 10 * idx);
+        });
     }
 
-    private _animateShortestPath(nodesInShortestPathOrder: NodeElement[]) {
-        for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+    private _animateShortestPath(path: NodeElement[]) {
+        path.forEach((node, idx) => {
             setTimeout(() => {
-                const node = nodesInShortestPathOrder[i];
-                if (i === 0 || i === nodesInShortestPathOrder.length - 1) {
+                if (idx === 0) {
                     return;
                 }
                 node.setShortClass();
-            }, 100 * i);
-        }
+            }, 100 * idx);
+        });
     }
 
     private _getStartNode = () => {
-        return this._nodes.flatMap(row => row).filter(({ isStartNode }) => isStartNode)[0];
+        return this._nodes.flatMap(row => row.filter(({ isStartNode }) => isStartNode))[0];
     }
 
     private _getDestinationNode = () => {
-        return this._nodes.flatMap(row => row).filter(({ isDestinationNode }) => isDestinationNode)[0];
+        return this._nodes.flatMap(row => row.filter(({ isDestinationNode }) => isDestinationNode))[0];
     }
 
     private _onMouseDown = (node: NodeElement) => {

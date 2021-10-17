@@ -4,7 +4,7 @@
 // by backtracking from the finish node.
 import { NodeElement } from "./Node";
 
-export const dijkstra = (grid: NodeElement[][], startNode: NodeElement, finishNode: NodeElement) => {
+export const dijkstra = (grid: NodeElement[][], startNode: NodeElement, destinationNode: NodeElement) => {
     const visitedNodesInOrder: NodeElement[] = [];
     startNode.setDistance(0);
     const unvisitedNodes = grid.flatMap(node => node);
@@ -18,7 +18,7 @@ export const dijkstra = (grid: NodeElement[][], startNode: NodeElement, finishNo
         if (closestNode.distance === Infinity) return visitedNodesInOrder;
         closestNode.setVisited(true);
         visitedNodesInOrder.push(closestNode);
-        if (closestNode === finishNode) return visitedNodesInOrder;
+        if (closestNode === destinationNode) return visitedNodesInOrder;
         updateUnvisitedNeighbors(closestNode, grid);
     }
 }
@@ -29,10 +29,10 @@ const sortNodesByDistance = (unvisitedNodes: NodeElement[]) => {
 
 const updateUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
     const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
-    for (const neighbor of unvisitedNeighbors) {
+    unvisitedNeighbors.forEach((neighbor) => {
         neighbor.setDistance(node.distance + 1);
         neighbor.setPreviousNode(node);
-    }
+    });
 }
 
 const getUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
@@ -47,12 +47,12 @@ const getUnvisitedNeighbors = (node: NodeElement, grid: NodeElement[][]) => {
 
 // Backtracks from the finishNode to find the shortest path.
 // Only works when called *after* the dijkstra method above.
-export const getNodesInShortestPathOrder = (finishNode: NodeElement) => {
-    const nodesInShortestPathOrder: NodeElement[] = [];
-    let currentNode: NodeElement | null = finishNode;
+export const getShortestPath = (destinationNode: NodeElement) => {
+    const path: NodeElement[] = [];
+    let currentNode: NodeElement | null = destinationNode;
     while (currentNode !== null) {
-        nodesInShortestPathOrder.unshift(currentNode);
+        path.unshift(currentNode);
         currentNode = currentNode.previousNode;
     }
-    return nodesInShortestPathOrder;
+    return path;
 }
