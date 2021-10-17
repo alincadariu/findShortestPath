@@ -1,5 +1,5 @@
 import { Grid } from "./Grid";
-const wrapper = document.createElement('div');
+const wrapper = document.getElementById('wrapper') as HTMLDivElement;
 
 const rowsLength = 20;
 const columnsLength = 50;

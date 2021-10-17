@@ -50,13 +50,7 @@ export class Grid {
                     });
                 }));
 
-        const button = document.createElement('button');
-        const buttonText = document.createElement('p');
-        button.classList.add('button');
-        buttonText.classList.add('buttonText');
-        buttonText.textContent = 'Find shortest path';
-        button.appendChild(buttonText);
-        parent.appendChild(button);
+        const button = document.getElementById('button') as HTMLDivElement;
         button.addEventListener('click', this._animate);
         parent.appendChild(this._gridElement);
     }
@@ -90,7 +84,7 @@ export class Grid {
                     return;
                 }
                 node.setShortClass();
-            }, 100 * idx);
+            }, 50 * idx);
         });
     }
 
