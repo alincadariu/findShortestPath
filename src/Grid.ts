@@ -3,6 +3,7 @@ import {
     dijkstra,
     getShortestPath
 } from "./dijkstra";
+import { MouseInteraction } from "./MouseInteraction";
 
 type GridProps = {
     startNode: number[];
@@ -15,9 +16,7 @@ type GridProps = {
 export class Grid {
     private _nodes: Node[][];
     private _gridElement: HTMLDivElement;
-    private _isDragging: boolean = false;
-    private _isDraggingSpecialNode: boolean = false;
-    private _typeSpecialNode: 'start' | 'destination' | null = null;
+    private _mouseInteraction: MouseInteraction;
 
     constructor({
         startNode,
@@ -43,13 +42,12 @@ export class Grid {
                         isStartNode,
                         isDestinationNode,
                         grid: this._gridElement,
-                        onMouseDown: this._onMouseDown,
-                        onMouseUp: this._onMouseUp,
-                        onMouseEnter: this._onMouseEnter,
-                        onMouseLeave: this._onMouseLeave,
                     });
-                }));
-
+                })
+            );
+            
+        this._mouseInteraction = new MouseInteraction({nodes: this._nodes});
+        
         const button = document.getElementById('button') as HTMLDivElement;
         button.addEventListener('click', this._animate);
         parent.appendChild(this._gridElement);
@@ -74,6 +72,7 @@ export class Grid {
                 node.animateVisiting();
             }, 5 * idx);
         });
+        this._mouseInteraction.destroy();
     }
 
     private _animateShortestPath(path: Node[]) {
@@ -93,53 +92,5 @@ export class Grid {
 
     private _getDestinationNode = () => {
         return this._nodes.flatMap(row => row.filter(({ isDestinationNode }) => isDestinationNode))[0];
-    }
-
-    private _onMouseDown = (node: Node) => {
-        this._isDraggingSpecialNode = node.isSpecialNode;
-        if (this._isDraggingSpecialNode) {
-            this._typeSpecialNode = node.isStartNode
-                ? 'start'
-                : 'destination';
-        }
-        this._isDragging = true;
-    }
-
-    private _onMouseEnter = (node: Node) => {
-        if (!this._isDragging) {
-            return;
-        }
-
-        if (node.isSpecialNode && !this._isDraggingSpecialNode){
-            return;
-        }
-
-        this._isDraggingSpecialNode
-            ? this._setSpecialNode(node)
-            : node.setWallNode();
-    }
-
-    private _onMouseLeave = (node: Node) => {
-        if (!(this._isDragging && this._isDraggingSpecialNode && node.isSpecialNode)) {
-            return;
-        }
-
-        this._removeSpecialNode(node);
-    }
-
-    private _onMouseUp = () => {
-        this._isDragging = false;
-    }
-
-    private _setSpecialNode = (node: Node) => {
-        this._typeSpecialNode === 'start'
-            ? node.setStartNode()
-            : node.setDestinationNode();
-    }
-
-    private _removeSpecialNode = (node: Node) => {
-        this._typeSpecialNode === 'start'
-            ? node.removeStartNode()
-            : node.removeDestinationNode();
     }
 }

@@ -60,7 +60,7 @@ body {
     animation-fill-mode: forwards;
 }
 
-.node.visiting.short {
+.node.visiting.shortest {
     animation: short 2s ease-in;
     animation-fill-mode: forwards;
     background-color: black;

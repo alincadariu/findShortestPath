@@ -6,10 +6,6 @@ type NodeProps = {
         column: number;
     }
     grid: HTMLDivElement;
-    onMouseDown: (node: Node) => void;
-    onMouseEnter: (node: Node) => void;
-    onMouseUp: () => void;
-    onMouseLeave: (node: Node) => void;
 }
 
 export class Node {
@@ -28,10 +24,6 @@ export class Node {
         isDestinationNode,
         isStartNode,
         grid,
-        onMouseDown,
-        onMouseEnter,
-        onMouseUp,
-        onMouseLeave,
     }: NodeProps) {
         this._position = position;
         this._isDestinationNode = isDestinationNode ?? false;
@@ -43,6 +35,9 @@ export class Node {
         this._element.classList.add('node');
         this._wrapper.classList.add('wrapperNode');
 
+        this._wrapper.dataset['row'] = position.row.toString();
+        this._wrapper.dataset['column'] = position.column.toString();
+
         if (this._isStartNode) {
             this.setStartNode();
         }
@@ -51,21 +46,16 @@ export class Node {
             this.setDestinationNode();
         }
 
-        this._wrapper.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            onMouseDown(this);
-        });
-        
-        this._wrapper.addEventListener('mouseenter', () => onMouseEnter(this));
-        this._wrapper.addEventListener('mouseup', () => onMouseUp());
-        this._wrapper.addEventListener('mouseleave', () => onMouseLeave(this));
-
         this._wrapper.appendChild(this._element);
         grid.appendChild(this._wrapper);
     }
 
     public get position() {
         return this._position;
+    }
+
+    public get element() {
+        return this._wrapper;
     }
 
     public setPreviousNode = (node: Node) => {
@@ -93,7 +83,7 @@ export class Node {
     }
 
     public animateShortest = () => {
-        this._element.classList.add('short');
+        this._element.classList.add('shortest');
     }
 
     public get distance() {
