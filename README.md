@@ -5,4 +5,4 @@
  - drag and drop start/destination node (red: start node, blue: destination node)
  - create holes by clicking and dragging on lemons.
 
- ![short](https://github.com/alincadariu/findShortestPath/blob/main/assets/short.gif)
+ ![shortest](https://github.com/alincadariu/findShortestPath/blob/main/assets/shortest.gif)
