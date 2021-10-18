@@ -28,7 +28,7 @@ body {
 .grid{
     display: inline-grid;
     grid-template-columns: repeat(50, 1fr);
-    grid-template-rows: repeat(20, 1fr);
+    grid-template-rows: repeat(25, 1fr);
     gap: 3px;
     position: relative;
 }
@@ -54,7 +54,7 @@ body {
 }
 
 .node.visiting {
-    animation: visiting 2s ease-in;
+    animation: visiting 1s ease-in;
     animation-fill-mode: forwards;
 }
 

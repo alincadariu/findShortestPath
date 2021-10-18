@@ -1,7 +1,7 @@
 import { Grid } from "./Grid";
 const wrapper = document.getElementById('wrapper') as HTMLDivElement;
 
-const rowsLength = 20;
+const rowsLength = 25;
 const columnsLength = 50;
 
 const startNode = [10, 10];

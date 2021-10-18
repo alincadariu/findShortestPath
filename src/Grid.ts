@@ -61,19 +61,18 @@ export class Grid {
         const visitedNodesInOrder = dijkstra(this._nodes, startNode, destinationNode) as Node[];
         const shortestPath = getShortestPath(destinationNode);
         visitedNodesInOrder.forEach((node, idx) => {
-            if (idx === visitedNodesInOrder.length - 1) {
-                setTimeout(() => {
-                    this._animateShortestPath(shortestPath);
-                }, 10 * idx);
-                return;
-            }
-
             setTimeout(() => {
                 if (idx === 0) {
                     return;
                 }
+
+                if (idx === visitedNodesInOrder.length - 1) {
+                    this._animateShortestPath(shortestPath);
+                    return;
+                }
+                
                 node.animateVisiting();
-            }, 10 * idx);
+            }, 5 * idx);
         });
     }
 
