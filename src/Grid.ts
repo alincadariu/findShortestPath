@@ -110,15 +110,20 @@ export class Grid {
             return;
         }
 
+        if (node.isSpecialNode && !this._isDraggingSpecialNode){
+            return;
+        }
+
         this._isDraggingSpecialNode
             ? this._setSpecialNode(node)
             : node.setWallNode();
     }
 
     private _onMouseLeave = (node: Node) => {
-        if (!(this._isDragging && this._isDraggingSpecialNode)) {
+        if (!(this._isDragging && this._isDraggingSpecialNode && node.isSpecialNode)) {
             return;
         }
+
         this._removeSpecialNode(node);
     }
 
