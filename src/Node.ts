@@ -6,10 +6,10 @@ type NodeProps = {
         column: number;
     }
     grid: HTMLDivElement;
-    onMouseDown: (e: Node) => void;
-    onMouseEnter: (e: Node) => void;
+    onMouseDown: (node: Node) => void;
+    onMouseEnter: (node: Node) => void;
     onMouseUp: () => void;
-    onMouseLeave: (e: Node) => void;
+    onMouseLeave: (node: Node) => void;
 }
 
 export class Node {
@@ -17,6 +17,7 @@ export class Node {
     private _isStartNode: boolean = false;
     private _isWallNode: boolean = false;
     private _element: HTMLDivElement;
+    private _wrapper: HTMLDivElement;
     private _position: { row: number; column: number };
     private _distance: number = Infinity;
     private _isVisited: boolean = false;
@@ -36,9 +37,11 @@ export class Node {
         this._isDestinationNode = isDestinationNode ?? false;
         this._isStartNode = isStartNode ?? false;
 
+        this._wrapper = document.createElement('div');
         this._element = document.createElement('div');
 
         this._element.classList.add('node');
+        this._wrapper.classList.add('wrapperNode');
 
         if (this._isStartNode) {
             this.setStartNode();
@@ -48,12 +51,17 @@ export class Node {
             this.setDestinationNode();
         }
 
-        this._element.addEventListener('mousedown', () => onMouseDown(this));
-        this._element.addEventListener('mouseenter', () => onMouseEnter(this));
-        this._element.addEventListener('mouseup', () => onMouseUp());
-        this._element.addEventListener('mouseleave', () => onMouseLeave(this));
+        this._wrapper.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            onMouseDown(this);
+        });
+        
+        this._wrapper.addEventListener('mouseenter', () => onMouseEnter(this));
+        this._wrapper.addEventListener('mouseup', () => onMouseUp());
+        this._wrapper.addEventListener('mouseleave', () => onMouseLeave(this));
 
-        grid.appendChild(this._element);
+        this._wrapper.appendChild(this._element);
+        grid.appendChild(this._wrapper);
     }
 
     public get position() {

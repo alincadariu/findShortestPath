@@ -21,16 +21,18 @@ body {
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 20px;
-    border-radius: 20px;
-    border: 5px solid orangered;
 }
 
 .grid{
     display: inline-grid;
     grid-template-columns: repeat(50, 1fr);
     grid-template-rows: repeat(25, 1fr);
-    gap: 3px;
     position: relative;
+}
+
+.wrapperNode {
+    margin: 1px;
+    cursor: pointer;
 }
 
 .node {
