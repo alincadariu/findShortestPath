@@ -64,11 +64,11 @@ export class Grid {
                     return;
                 }
 
-                if (idx === visitedNodesInOrder.length - 1) {
+                if (idx === visitedNodesInOrder.length - 1 && shortestPath.length > 0) {
                     this._animateShortestPath(shortestPath);
                     return;
                 }
-                
+
                 node.animateVisiting();
             }, 5 * idx);
         });

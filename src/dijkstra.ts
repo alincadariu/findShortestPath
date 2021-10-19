@@ -14,6 +14,8 @@ export const dijkstra = (grid: Node[][], startNode: Node, destinationNode: Node)
 
         if (closestNode.isWallNode) continue;
 
+        if (closestNode.distance === Infinity) return visitedNodesInOrder;
+
         closestNode.setVisited(true);
         visitedNodesInOrder.push(closestNode);
 
@@ -49,6 +51,11 @@ const getUnvisitedNeighbors = (node: Node, grid: Node[][]) => {
 // Only works when called *after* the dijkstra method above.
 export const getShortestPath = (destinationNode: Node) => {
     const path: Node[] = [];
+
+    if (destinationNode.previousNode == null) {
+        return path;
+    }
+
     let currentNode: Node | null = destinationNode;
     while (currentNode !== null) {
         path.unshift(currentNode);
