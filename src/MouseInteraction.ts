@@ -34,14 +34,16 @@ export class MouseInteraction {
     private _onMouseDown = (e: MouseEvent) => {
         e.preventDefault();
         const node = this._mapTargetToNode(e.currentTarget as HTMLDivElement);
+        this._isDragging = true;
 
         this._isDraggingSpecialNode = node.isSpecialNode;
         if (this._isDraggingSpecialNode) {
             this._typeSpecialNode = node.isStartNode
                 ? 'start'
                 : 'destination';
+            return;
         }
-        this._isDragging = true;
+        node.setWallNode();
     }
 
     private _onMouseEnter = (e: MouseEvent) => {
