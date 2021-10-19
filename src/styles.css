@@ -30,17 +30,14 @@ body {
     position: relative;
 }
 
-.wrapperNode {
-    margin: 1px;
-    cursor: pointer;
-}
-
 .node {
     height: 20px;
     width: 20px;
     box-shadow: 2px orangered;
     background-color: #fb3;
     border-radius: 10px 10px 10px 3px;
+    margin: 1px;
+    cursor: pointer;
 }
 
 .node.startNode {

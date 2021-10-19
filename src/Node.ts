@@ -13,7 +13,6 @@ export class Node {
     private _isStartNode: boolean = false;
     private _isWallNode: boolean = false;
     private _element: HTMLDivElement;
-    private _wrapper: HTMLDivElement;
     private _position: { row: number; column: number };
     private _distance: number = Infinity;
     private _isVisited: boolean = false;
@@ -29,14 +28,12 @@ export class Node {
         this._isDestinationNode = isDestinationNode ?? false;
         this._isStartNode = isStartNode ?? false;
 
-        this._wrapper = document.createElement('div');
         this._element = document.createElement('div');
 
         this._element.classList.add('node');
-        this._wrapper.classList.add('wrapperNode');
 
-        this._wrapper.dataset['row'] = position.row.toString();
-        this._wrapper.dataset['column'] = position.column.toString();
+        this._element.dataset['row'] = position.row.toString();
+        this._element.dataset['column'] = position.column.toString();
 
         if (this._isStartNode) {
             this.setStartNode();
@@ -46,8 +43,7 @@ export class Node {
             this.setDestinationNode();
         }
 
-        this._wrapper.appendChild(this._element);
-        grid.appendChild(this._wrapper);
+        grid.appendChild(this._element);
     }
 
     public get position() {
@@ -55,7 +51,7 @@ export class Node {
     }
 
     public get element() {
-        return this._wrapper;
+        return this._element;
     }
 
     public setPreviousNode = (node: Node) => {
@@ -93,6 +89,12 @@ export class Node {
     public setWallNode = () => {
         this._isWallNode = true;
         this._element.classList.add('wallNode');
+    }
+
+    public setNormalNode = () => {
+        this.removeDestinationNode();
+        this.removeStartNode();
+        this.removeWallNode();
     }
 
     public removeWallNode = () => {

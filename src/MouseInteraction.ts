@@ -1,9 +1,11 @@
+import { distinct, filter, fromEvent, map, mergeMap, pairwise, takeUntil, tap } from "rxjs";
 import { Node } from "./Node";
 
 type MouseInteractionProps = {
+    parent: HTMLDivElement;
     nodes: Node[][];
 }
-export class MouseInteraction {
+export class ClassicMouseInteraction {
     private _nodes: Node[][];
     private _isDragging: boolean = false;
     private _isDraggingSpecialNode: boolean = false;
@@ -93,4 +95,70 @@ export class MouseInteraction {
         const column = parseInt(target.dataset.column as string);
         return this._nodes[row][column];
     }
+}
+
+export const ObservableMouseInteraction = ({
+    parent, 
+    nodes,
+}: MouseInteractionProps) => {
+    const onMouseDown$ = fromEvent(parent, 'mousedown');
+    const onMouseUp$ = fromEvent(parent, 'mouseup');
+    const onMouseMove$ = fromEvent(parent, 'mousemove');
+
+    const interaction$ = onMouseDown$.pipe(
+        tap(e => e.preventDefault()),
+        filter(e => nodeClass(e)),
+        map(e => setInitial(e)),
+        mergeMap(_ => onMouseMove$.pipe(
+                distinct(e => e.target),
+                filter(e => nodeClass(e)),
+                pairwise(),
+                map(([prev, curr]) => assignNodeType(prev, curr)),
+                takeUntil(onMouseUp$)
+            )
+        ))
+    .subscribe();
+
+    const mapTargetToNode = (target: HTMLDivElement) => {
+        const row = parseInt(target.dataset.row as string);
+        const column = parseInt(target.dataset.column as string);
+        return nodes[row][column];
+    }
+
+    const assignNodeType = (prev: Event, curr: Event) => {
+        const prevNode = mapTargetToNode(prev.target as HTMLDivElement);
+        const currNode = mapTargetToNode(curr.target as HTMLDivElement);
+        // clashing is not handled yet
+
+        if (prevNode.isWallNode && !currNode.isSpecialNode) {
+            currNode.setWallNode();
+            return;
+        }
+
+        if (prevNode.isSpecialNode && !currNode.isSpecialNode) {
+            prevNode.isStartNode
+                ? currNode.setStartNode()
+                : currNode.setDestinationNode();
+
+            prevNode.setNormalNode();
+        }
+    }
+
+    const setInitial = (ev: Event) => {
+        const node = mapTargetToNode(ev.target as HTMLDivElement);
+        if (node.isSpecialNode) {
+            return;
+        }
+        node.setWallNode();
+    }
+
+    const nodeClass = (ev: Event) => {
+        return (ev.target as HTMLDivElement).classList.contains('node');
+    }
+
+    const destroy = () => {
+        interaction$.unsubscribe();
+    }
+
+    return { destroy };
 }

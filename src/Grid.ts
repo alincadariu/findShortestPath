@@ -3,7 +3,7 @@ import {
     dijkstra,
     getShortestPath
 } from "./dijkstra";
-import { MouseInteraction } from "./MouseInteraction";
+import { ClassicMouseInteraction, ObservableMouseInteraction } from "./MouseInteraction";
 
 type GridProps = {
     startNode: number[];
@@ -16,7 +16,7 @@ type GridProps = {
 export class Grid {
     private _nodes: Node[][];
     private _gridElement: HTMLDivElement;
-    private _mouseInteraction: MouseInteraction;
+    private _destroy: () => void;
 
     constructor({
         startNode,
@@ -46,7 +46,8 @@ export class Grid {
                 })
             );
             
-        this._mouseInteraction = new MouseInteraction({nodes: this._nodes});
+        const { destroy } = ObservableMouseInteraction({parent: this._gridElement, nodes: this._nodes});
+        this._destroy = destroy;
         
         const button = document.getElementById('button') as HTMLDivElement;
         button.addEventListener('click', this._animate);
@@ -72,7 +73,7 @@ export class Grid {
                 node.animateVisiting();
             }, 5 * idx);
         });
-        this._mouseInteraction.destroy();
+        this._destroy();
     }
 
     private _animateShortestPath(path: Node[]) {
