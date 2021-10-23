@@ -97,6 +97,41 @@ export class ClassicMouseInteraction {
     }
 }
 
+const mapTargetToNode = (e: Event, nodes: Node[][]) => {
+    const target = e.target as HTMLDivElement;
+    const row = parseInt(target.dataset.row as string);
+    const column = parseInt(target.dataset.column as string);
+    return nodes[row][column];
+}
+
+const assignNodeType = (prevNode: Node, currNode: Node) => {
+    // clashing is not handled yet
+
+    if (prevNode.isWallNode && !currNode.isSpecialNode) {
+        currNode.setWallNode();
+        return;
+    }
+
+    if (prevNode.isSpecialNode && !currNode.isSpecialNode) {
+        prevNode.isStartNode
+            ? currNode.setStartNode()
+            : currNode.setDestinationNode();
+
+        prevNode.setNormalNode();
+    }
+}
+
+const setInitial = (node: Node) => {
+    if (node.isSpecialNode) {
+        return;
+    }
+    node.setWallNode();
+}
+
+const nodeClass = (ev: Event) => {
+    return (ev.target as HTMLDivElement).classList.contains('node');
+}
+
 export const ObservableMouseInteraction = ({
     parent, 
     nodes,
@@ -108,53 +143,21 @@ export const ObservableMouseInteraction = ({
     const interaction$ = onMouseDown$.pipe(
         tap(e => e.preventDefault()),
         filter(e => nodeClass(e)),
-        map(e => setInitial(e)),
+        map(e => mapTargetToNode(e, nodes)),
+        map(node => setInitial(node)),
         mergeMap(_ => onMouseMove$.pipe(
                 distinct(e => e.target),
                 filter(e => nodeClass(e)),
                 pairwise(),
-                map(([prev, curr]) => assignNodeType(prev, curr)),
+                map(([prev, curr]) => [
+                    mapTargetToNode(prev, nodes), 
+                    mapTargetToNode(curr, nodes)
+                ]),
+                map(([prevNode, currNode]) => assignNodeType(prevNode, currNode)),
                 takeUntil(onMouseUp$)
             )
         ))
     .subscribe();
-
-    const mapTargetToNode = (target: HTMLDivElement) => {
-        const row = parseInt(target.dataset.row as string);
-        const column = parseInt(target.dataset.column as string);
-        return nodes[row][column];
-    }
-
-    const assignNodeType = (prev: Event, curr: Event) => {
-        const prevNode = mapTargetToNode(prev.target as HTMLDivElement);
-        const currNode = mapTargetToNode(curr.target as HTMLDivElement);
-        // clashing is not handled yet
-
-        if (prevNode.isWallNode && !currNode.isSpecialNode) {
-            currNode.setWallNode();
-            return;
-        }
-
-        if (prevNode.isSpecialNode && !currNode.isSpecialNode) {
-            prevNode.isStartNode
-                ? currNode.setStartNode()
-                : currNode.setDestinationNode();
-
-            prevNode.setNormalNode();
-        }
-    }
-
-    const setInitial = (ev: Event) => {
-        const node = mapTargetToNode(ev.target as HTMLDivElement);
-        if (node.isSpecialNode) {
-            return;
-        }
-        node.setWallNode();
-    }
-
-    const nodeClass = (ev: Event) => {
-        return (ev.target as HTMLDivElement).classList.contains('node');
-    }
 
     const destroy = () => {
         interaction$.unsubscribe();
